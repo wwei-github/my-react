@@ -34,8 +34,8 @@ export const jsx = (
 	let key: Key = null;
 	let ref: Ref = null;
 	const props: Props = {};
-	for (let prop in config) {
-		let val = config[prop];
+	for (const prop in config) {
+		const val = config[prop];
 		if (prop === 'key') {
 			if (val !== undefined) {
 				key = '' + val;
@@ -67,8 +67,8 @@ export const jsxDEV = (type: ElementType, config: any) => {
 	let key: Key = null;
 	let ref: Ref = null;
 	const props: Props = {};
-	for (let prop in config) {
-		let val = config[prop];
+	for (const prop in config) {
+		const val = config[prop];
 		if (prop === 'key') {
 			if (val !== undefined) {
 				key = '' + val;
