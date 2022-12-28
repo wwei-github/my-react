@@ -3,6 +3,7 @@ import fs from 'fs';
 
 import ts from 'rollup-plugin-typescript2';
 import cjs from '@rollup/plugin-commonjs';
+import replace from '@rollup/plugin-replace';
 
 // 获取packages的文件路径
 const pkgPath = path.resolve(__dirname, '../../packages');
@@ -23,7 +24,10 @@ export function getPackageJson(pkgName) {
 	return JSON.parse(str);
 }
 
-export function getBaseRollupPlugins({ typescript = {} } = {}) {
+export function getBaseRollupPlugins({
+	alias = { __DEV__: true },
+	typescript = {}
+} = {}) {
 	// 获取公用的plugin
-	return [cjs(), ts(typescript)];
+	return [replace(alias), cjs(), ts(typescript)];
 }

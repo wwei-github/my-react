@@ -39,10 +39,17 @@ function renderRoot(root: FiberRootNode) {
 		try {
 			workLoop(); // 执行循环
 		} catch (e) {
-			console.warn('workLoop发生错误:', e);
+			if (__DEV__) {
+				console.warn('workLoop发生错误:', e);
+			}
 			workInProgress = null;
 		}
 	} while (true);
+
+	const finishedWork = root.current.alternate; //递归执行完以后构建出来的workInProgress树
+	root.finishedWork = finishedWork;
+
+	commitRoot(root);
 }
 
 function workLoop() {
@@ -52,7 +59,7 @@ function workLoop() {
 }
 
 function performUnitOfWork(fiber: FiberNode) {
-	const next = beginWork(); // 可能是子fiber 或者是null
+	const next = beginWork(fiber); // 可能是子fiber 或者是null
 	fiber.memoizedProps = fiber.pendingProps; // 执行完毕后赋值props
 
 	if (next === null) {

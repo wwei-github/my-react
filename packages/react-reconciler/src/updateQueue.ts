@@ -11,7 +11,7 @@ export interface UpdateQueue<State> {
 export const createUpdate = <State>(action: Action<State>): Update<State> => {
 	return { action };
 };
-export const createUpdateQueue = <Action>(): UpdateQueue<Action> => {
+export const createUpdateQueue = <State>(): UpdateQueue<State> => {
 	return {
 		shared: {
 			pending: null
@@ -19,9 +19,9 @@ export const createUpdateQueue = <Action>(): UpdateQueue<Action> => {
 	};
 };
 // 将update放到updateQueue里
-export const enqueueUpdate = <Action>(
-	updateQueue: UpdateQueue<Action>,
-	update: Update<Action>
+export const enqueueUpdate = <State>(
+	updateQueue: UpdateQueue<State>,
+	update: Update<State>
 ) => {
 	updateQueue.shared.pending = update;
 };
@@ -30,16 +30,16 @@ export const enqueueUpdate = <Action>(
 export const processUpdateQueue = <State>(
 	baseState: State,
 	pendingState: Update<State> | null
-): { memoizeState: State } => {
+): { memoizedState: State } => {
 	const result: ReturnType<typeof processUpdateQueue<State>> = {
-		memoizeState: baseState
+		memoizedState: baseState
 	};
 	if (pendingState != null) {
 		const action = pendingState.action;
 		if (action instanceof Function) {
-			result.memoizeState = action(baseState);
+			result.memoizedState = action(baseState);
 		} else {
-			result.memoizeState = action;
+			result.memoizedState = action;
 		}
 	}
 	return result;
