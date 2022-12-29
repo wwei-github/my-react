@@ -2,8 +2,8 @@
 import { FiberNode } from './fiber';
 import { processUpdateQueue, UpdateQueue } from './updateQueue';
 import { HostComponent, HostRoot, HostText } from './workTags';
-import { ReactElement } from '../../react/src/jsx';
 import { mountChildFibers, reconcileChildFibers } from './childFibers';
+import { ReactElementType } from 'shared/ReactTypes';
 export const beginWork = (wip: FiberNode) => {
 	switch (wip.tag) {
 		case HostRoot:
@@ -47,7 +47,7 @@ function updateHostComponentUpdate(wip: FiberNode) {
 	return wip.child;
 }
 
-function reconcileChildren(wip: FiberNode, children?: ReactElement) {
+function reconcileChildren(wip: FiberNode, children?: ReactElementType) {
 	const current = wip.alternate;
 
 	// mount 阶段的HostRootFiber既有wip，也有current 所以进入reconcileChildFibers

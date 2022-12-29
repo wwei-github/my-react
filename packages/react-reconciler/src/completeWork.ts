@@ -7,6 +7,7 @@ import {
 import { FiberNode } from './fiber';
 import { NoFlags } from './fiberFlags';
 import { HostText, HostComponent, HostRoot } from './workTags';
+import { Container } from 'hostConfig';
 export const completeWork = (wip: FiberNode) => {
 	const current = wip.alternate;
 	const newProps = wip.pendingProps; // 新的props
@@ -46,7 +47,7 @@ export const completeWork = (wip: FiberNode) => {
 			break;
 	}
 };
-function appendAllChild(parent: FiberNode, wip: FiberNode) {
+function appendAllChild(parent: Container, wip: FiberNode) {
 	let node = wip.child;
 	while (node !== null) {
 		if (node.tag === HostComponent || node.tag === HostText) {
