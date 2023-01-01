@@ -14,7 +14,8 @@ export const completeWork = (wip: FiberNode) => {
 
 	switch (wip.tag) {
 		case HostRoot:
-			return;
+			bubbleProperties(wip);
+			return null;
 		case HostComponent:
 			if (current !== null && wip.stateNode) {
 				// update

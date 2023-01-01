@@ -9,7 +9,10 @@ export const commitMutationEffects = (finishedWork: FiberNode) => {
 
 	while (nextEffect !== null) {
 		const child: FiberNode | null = nextEffect.child;
-		if (child !== null && (child.subTreeFlags & MutationMask) !== NoFlags) {
+		if (
+			child !== null &&
+			(nextEffect.subTreeFlags & MutationMask) !== NoFlags
+		) {
 			nextEffect = child;
 		} else {
 			// 找到最深处的subTreeFlags对应的子级
@@ -66,7 +69,7 @@ function appendPlacementNodeIntoContainer(
 	hostParent: Container
 ) {
 	if (finishedWork.tag === HostComponent || finishedWork.tag === HostText) {
-		appendChildToContainer(finishedWork.stateNode, hostParent);
+		appendChildToContainer(hostParent, finishedWork.stateNode);
 		return;
 	}
 	const child = finishedWork.child;
