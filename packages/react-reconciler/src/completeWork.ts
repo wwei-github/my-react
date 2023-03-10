@@ -6,7 +6,12 @@ import {
 } from 'hostConfig';
 import { FiberNode } from './fiber';
 import { NoFlags } from './fiberFlags';
-import { HostText, HostComponent, HostRoot } from './workTags';
+import {
+	HostText,
+	HostComponent,
+	HostRoot,
+	FunctionComponent
+} from './workTags';
 import { Container } from 'hostConfig';
 export const completeWork = (wip: FiberNode) => {
 	const current = wip.alternate;
@@ -14,6 +19,9 @@ export const completeWork = (wip: FiberNode) => {
 
 	switch (wip.tag) {
 		case HostRoot:
+			bubbleProperties(wip);
+			return null;
+		case FunctionComponent:
 			bubbleProperties(wip);
 			return null;
 		case HostComponent:

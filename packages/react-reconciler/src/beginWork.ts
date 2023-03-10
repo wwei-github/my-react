@@ -1,9 +1,15 @@
 // 递 阶段，比较子节点
 import { FiberNode } from './fiber';
-import { processUpdateQueue, UpdateQueue } from './updateQueue';
-import { HostComponent, HostRoot, HostText } from './workTags';
+import processUpdateQueue, { UpdateQueue } from './updateQueue';
+import {
+	FunctionComponent,
+	HostComponent,
+	HostRoot,
+	HostText
+} from './workTags';
 import { mountChildFibers, reconcileChildFibers } from './childFibers';
 import { ReactElementType } from 'shared/ReactTypes';
+import { renderWithHooks } from './fiberHooks';
 export const beginWork = (wip: FiberNode) => {
 	switch (wip.tag) {
 		case HostRoot:
@@ -12,6 +18,8 @@ export const beginWork = (wip: FiberNode) => {
 			return updateHostComponentUpdate(wip);
 		case HostText:
 			return null;
+		case FunctionComponent:
+			return updateFunctionComponent(wip);
 		default:
 			if (__DEV__) {
 				console.warn('未实现的节点类型');
@@ -20,6 +28,11 @@ export const beginWork = (wip: FiberNode) => {
 	}
 	return null;
 };
+function updateFunctionComponent(wip: FiberNode) {
+	const nextChildren = renderWithHooks(wip);
+	reconcileChildren(wip, nextChildren);
+	return wip.child;
+}
 function updateHostRoot(wip: FiberNode) {
 	// root beginwork
 	// 1.获取最新的更新

@@ -27,7 +27,7 @@ export const enqueueUpdate = <State>(
 };
 
 // 消费更新
-export const processUpdateQueue = <State>(
+const processUpdateQueue = <State>(
 	baseState: State,
 	pendingState: Update<State> | null
 ): { memoizedState: State } => {
@@ -44,3 +44,5 @@ export const processUpdateQueue = <State>(
 	}
 	return result;
 };
+export default processUpdateQueue;
+
