@@ -45,4 +45,3 @@ const processUpdateQueue = <State>(
 	return result;
 };
 export default processUpdateQueue;
-
