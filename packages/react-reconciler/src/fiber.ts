@@ -16,7 +16,7 @@ export class FiberNode {
 
 	pendingProps: Props;
 	memoizedProps: Props | null;
-	memoizedState: any;
+	memoizedState: any; // 存储hook链表结构
 
 	alternate: FiberNode | null;
 	flags: Flags;
