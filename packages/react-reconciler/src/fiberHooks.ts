@@ -64,6 +64,7 @@ function mountState<State>(
 	// 创建更新
 	const queue = createUpdateQueue<State>();
 	hook.updateQueue = queue;
+	hook.memoizedState = memoizedState;
 
 	// dispatch 绑定在window上时也是可以触发更新的
 	// @ts-ignore
