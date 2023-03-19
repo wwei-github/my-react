@@ -23,6 +23,7 @@ export class FiberNode {
 	subTreeFlags: Flags;
 
 	updateQueue: unknown;
+	deletions: FiberNode[] | null;
 	constructor(tag: WorkTag, pendingProps: Props, key: Key) {
 		this.tag = tag;
 		this.key = key;
@@ -44,6 +45,8 @@ export class FiberNode {
 		this.alternate = null; // current 和 workInProgress 相互指向
 		this.flags = NoFlags; //
 		this.subTreeFlags = NoFlags; // 收集子级的flags
+
+		this.deletions = null;
 	}
 }
 
@@ -82,6 +85,7 @@ export function createWorkInProgress(
 	wip.child = current.child;
 	wip.memoizedProps = current.memoizedProps;
 	wip.memoizedState = current.memoizedState;
+	wip.deletions = null;
 
 	return wip;
 }

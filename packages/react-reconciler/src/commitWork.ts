@@ -1,7 +1,24 @@
-import { appendChildToContainer, Container } from 'hostConfig';
+import {
+	appendChildToContainer,
+	commitUpdate,
+	Container,
+	removeChild
+} from 'hostConfig';
 import { FiberNode, FiberRootNode } from './fiber';
-import { MutationMask, NoFlags, Placement } from './fiberFlags';
-import { HostComponent, HostRoot, HostText } from './workTags';
+import {
+	MutationMask,
+	NoFlags,
+	Placement,
+	Update,
+	ChildDeion,
+	ChildDeletion
+} from './fiberFlags';
+import {
+	FunctionComponent,
+	HostComponent,
+	HostRoot,
+	HostText
+} from './workTags';
 
 let nextEffect: FiberNode | null = null;
 export const commitMutationEffects = (finishedWork: FiberNode) => {
@@ -36,7 +53,90 @@ const commitMutationEffectsOnFiber = (finishedWork: FiberNode) => {
 		// 0b0001110 & 0b1111101  => 0b0001100
 		finishedWork.flags & ~Placement; // 移除Placement标记
 	}
+	if ((flags & Update) !== NoFlags) {
+		commitUpdate(finishedWork);
+		finishedWork.flags & ~Update; // 移除Update标记
+	}
+	if ((flags & ChildDeletion) !== NoFlags) {
+		const deletions = finishedWork.deletions;
+		if (deletions !== null) {
+			deletions.forEach((childToDelete) => {
+				commitDeletion(childToDelete);
+			});
+		}
+		finishedWork.flags & ~ChildDeletion; // 移除ChildDeletion标记
+	}
 };
+
+function commitDeletion(childToDelete: FiberNode) {
+	let rootHostRoot: FiberNode | null = null;
+	// 递归子树
+	commitNestedComponent(childToDelete, (unmountFiber) => {
+		// 递归对每一个子组件进行unmount操作
+		switch (unmountFiber.tag) {
+			case HostComponent:
+				if (rootHostRoot === null) {
+					// 第一次开始递操作，是HostComponent,拿到根节点
+					rootHostRoot = unmountFiber;
+				}
+				//TODO 解绑ref
+				return;
+			case HostText:
+				if (rootHostRoot === null) {
+					// 第一次开始递操作，是HostText,拿到根节点
+					rootHostRoot = unmountFiber;
+				}
+				return;
+			case FunctionComponent:
+				// TODO useEffect unmounted处理
+				return;
+			default:
+				if (__DEV__) {
+					console.warn('为实现的unmount节点类型');
+				}
+				break;
+		}
+	});
+	// 移除rootHostRoot
+	if (rootHostRoot !== null) {
+		const hostParent = getHostParent(childToDelete);
+		if (hostParent !== null) {
+			removeChild((rootHostRoot as FiberNode).stateNode, hostParent);
+		}
+	}
+	childToDelete.return = null;
+	childToDelete.child = null;
+}
+function commitNestedComponent(
+	root: FiberNode,
+	onCommitUnmount: (fiber: FiberNode) => void
+) {
+	let node = root;
+	while (true) {
+		onCommitUnmount(node);
+		if (node.child !== null) {
+			// 深度向下遍历
+			node.child.return = node;
+			node = node.child;
+			continue;
+		}
+		if (node === root) {
+			// 跳出
+			return;
+		}
+		// 向上归的过程，可能会出现每一次归都是最后一个节点，
+		while (node.sibling === null) {
+			if (node.return === null || node.return === root) {
+				return;
+			}
+			node = node.return;
+		}
+
+		node.sibling.return = node;
+		node = node.sibling;
+	}
+}
+
 const commitPlacement = (finishedWork: FiberNode) => {
 	if (__DEV__) {
 		console.warn('执行Placement');
