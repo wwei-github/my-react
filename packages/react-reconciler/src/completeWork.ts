@@ -13,6 +13,7 @@ import {
 	FunctionComponent
 } from './workTags';
 import { Container } from 'hostConfig';
+import { updateFiberProps } from 'react-dom/src/SyntheticEvent';
 
 function markUpdate(fiber: FiberNode) {
 	fiber.flags |= Update;
@@ -31,6 +32,11 @@ export const completeWork = (wip: FiberNode) => {
 		case HostComponent:
 			if (current !== null && wip.stateNode) {
 				// update
+				// 1.判断props是否变化
+				// 2.如果变化打上Update标记
+				// 3.在commitUpdate判断hostComponent类型进行操作
+				// 这里直接更新，没有进行上述判断
+				updateFiberProps(wip.stateNode, newProps);
 			} else {
 				// mount
 				// instance : dom节点
