@@ -119,7 +119,7 @@ function ChildReconciler(shouldTrackEffects: boolean) {
 		currentFirstChild: FiberNode | null, // 更新前的单向链表结构
 		newChild: any[] // 子集数组
 	) {
-		let lastPlacedIndex: number = 0;
+		let lastPlacedIndex = 0;
 		let lastNewFiber: FiberNode | null = null;
 		let firstNewFiber: FiberNode | null = null;
 
@@ -156,12 +156,19 @@ function ChildReconciler(shouldTrackEffects: boolean) {
 			}
 
 			const current = newFiber.alternate;
+			// A1 B2 C3 -> B2 C3 A1
+			// 0__1__2  -> 0__1__2
+			// 第一步：B2 oldIndex:1  lastPlacedIndex:0
+			// 第二部：C3 oldIndex:2  lastPlacedIndex:1 不移动
+			// 第三步：A1 oldIndex:0  lastPlacedIndex:2 移动
 			if (current !== null) {
 				const oldIndex = current.index;
 				if (oldIndex < lastPlacedIndex) {
+					// 移动
 					newFiber.flags |= Placement;
 					continue;
 				} else {
+					// 不移动
 					lastPlacedIndex = oldIndex;
 				}
 			} else {

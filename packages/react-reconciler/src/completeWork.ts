@@ -93,7 +93,7 @@ function appendAllChild(parent: Container, wip: FiberNode) {
 			}
 			node = node?.return;
 		}
-		node.sibling.return = node;
+		node.sibling.return = node.return;
 		node = node.sibling;
 	}
 }
