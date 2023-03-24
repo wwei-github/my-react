@@ -154,7 +154,7 @@ function ChildReconciler(shouldTrackEffects: boolean) {
 				continue;
 			}
 
-			newFiber.key = i;
+			newFiber.index = i;
 			newFiber.return = returnFiber;
 			// 3.判断移动还是插入
 			if (lastNewFiber === null) {
