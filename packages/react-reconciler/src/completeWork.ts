@@ -10,7 +10,8 @@ import {
 	HostText,
 	HostComponent,
 	HostRoot,
-	FunctionComponent
+	FunctionComponent,
+	Fragment
 } from './workTags';
 import { Container } from 'hostConfig';
 import { updateFiberProps } from 'react-dom/src/SyntheticEvent';
@@ -24,9 +25,8 @@ export const completeWork = (wip: FiberNode) => {
 
 	switch (wip.tag) {
 		case HostRoot:
-			bubbleProperties(wip);
-			return null;
 		case FunctionComponent:
+		case Fragment:
 			bubbleProperties(wip);
 			return null;
 		case HostComponent:

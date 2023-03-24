@@ -93,7 +93,7 @@ function workLoop() {
 function performUnitOfWork(fiber: FiberNode) {
 	const next = beginWork(fiber); // 可能是子fiber 或者是null
 	fiber.memoizedProps = fiber.pendingProps; // 执行完毕后赋值props
-
+	console.log('performUnitOfWork:', fiber);
 	if (next === null) {
 		// 没有子节点，需要进行归操作
 		completeUnitWork(fiber);
