@@ -260,6 +260,24 @@ function ChildReconciler(shouldTrackEffects: boolean) {
 		return null;
 	}
 
+	function updateFragment(
+		returnFiber: FiberNode,
+		current: FiberNode | undefined,
+		elements: any[],
+		key: Key,
+		existingChildren: ExistingChildren
+	) {
+		let fiber;
+		if (!current || current.tag !== Fragment) {
+			fiber = createFiberFromFragment(elements, key);
+		} else {
+			existingChildren.delete(key);
+			fiber = useFiber(current, elements);
+		}
+		fiber.return = returnFiber;
+		return fiber;
+	}
+
 	return function reconcilerChildFibers(
 		returnFiber: FiberNode,
 		currentFiber: FiberNode | null,
@@ -319,23 +337,7 @@ function useFiber(fiber: FiberNode, pendingProps: Props): FiberNode {
 	return clone;
 }
 
-function updateFragment(
-	returnFiber: FiberNode,
-	current: FiberNode | undefined,
-	elements: any[],
-	key: Key,
-	existingChildren: ExistingChildren
-) {
-	let fiber;
-	if (!current || current.tag !== Fragment) {
-		fiber = createFiberFromFragment(elements, key);
-	} else {
-		existingChildren.delete(key);
-		fiber = useFiber(current, elements);
-	}
-	fiber.return = returnFiber;
-	return fiber;
-}
+
 
 export const reconcileChildFibers = ChildReconciler(true);
 export const mountChildFibers = ChildReconciler(false);

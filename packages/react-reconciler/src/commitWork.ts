@@ -24,7 +24,6 @@ import {
 let nextEffect: FiberNode | null = null;
 export const commitMutationEffects = (finishedWork: FiberNode) => {
 	nextEffect = finishedWork;
-
 	while (nextEffect !== null) {
 		const child: FiberNode | null = nextEffect.child;
 		if (
@@ -247,10 +246,10 @@ function insertOrAppendPlacementNodeIntoContainer(
 	}
 	const child = finishedWork.child;
 	if (child !== null) {
-		insertOrAppendPlacementNodeIntoContainer(child, hostParent);
-		let sibling = finishedWork.sibling;
+		insertOrAppendPlacementNodeIntoContainer(child, hostParent, before);
+		let sibling = child.sibling;
 		while (sibling !== null) {
-			insertOrAppendPlacementNodeIntoContainer(sibling, hostParent);
+			insertOrAppendPlacementNodeIntoContainer(sibling, hostParent, before);
 			sibling = sibling.sibling;
 		}
 	}

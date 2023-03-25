@@ -51,7 +51,6 @@ function renderRoot(root: FiberRootNode) {
 
 	const finishedWork = root.current.alternate; //递归执行完以后构建出来的workInProgress树
 	root.finishedWork = finishedWork;
-
 	commitRoot(root);
 }
 
