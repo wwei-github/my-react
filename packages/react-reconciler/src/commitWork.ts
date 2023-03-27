@@ -34,7 +34,6 @@ export const commitMutationEffects = (finishedWork: FiberNode) => {
 		} else {
 			// 找到最深处的subTreeFlags对应的子级
 			up: while (nextEffect !== null) {
-				console.log('up: ', nextEffect);
 				commitMutationEffectsOnFiber(nextEffect);
 				const sibling: FiberNode | null = nextEffect.sibling;
 				if (sibling !== null) {

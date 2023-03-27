@@ -1,3 +1,4 @@
+import { Lane } from './fiberLanes';
 // 递 阶段，比较子节点
 import { FiberNode } from './fiber';
 import processUpdateQueue, { UpdateQueue } from './updateQueue';
@@ -11,16 +12,16 @@ import {
 import { mountChildFibers, reconcileChildFibers } from './childFibers';
 import { ReactElementType } from 'shared/ReactTypes';
 import { renderWithHooks } from './fiberHooks';
-export const beginWork = (wip: FiberNode) => {
+export const beginWork = (wip: FiberNode, renderLane: Lane) => {
 	switch (wip.tag) {
 		case HostRoot:
-			return updateHostRoot(wip);
+			return updateHostRoot(wip, renderLane);
 		case HostComponent:
 			return updateHostComponentUpdate(wip);
 		case HostText:
 			return null;
 		case FunctionComponent:
-			return updateFunctionComponent(wip);
+			return updateFunctionComponent(wip, renderLane);
 		case Fragment:
 			return updateFragment(wip);
 		default:
@@ -36,12 +37,12 @@ function updateFragment(wip: FiberNode) {
 	reconcileChildren(wip, nextChildren);
 	return wip.child;
 }
-function updateFunctionComponent(wip: FiberNode) {
-	const nextChildren = renderWithHooks(wip);
+function updateFunctionComponent(wip: FiberNode, renderLane: Lane) {
+	const nextChildren = renderWithHooks(wip, renderLane);
 	reconcileChildren(wip, nextChildren);
 	return wip.child;
 }
-function updateHostRoot(wip: FiberNode) {
+function updateHostRoot(wip: FiberNode, renderLane: Lane) {
 	// root beginwork
 	// 1.获取最新的更新
 	// 2.拿到子节点的fibernode
@@ -51,7 +52,7 @@ function updateHostRoot(wip: FiberNode) {
 	const updateQueue = wip.updateQueue as UpdateQueue<Element>;
 	const pending = updateQueue.shared.pending;
 	updateQueue.shared.pending = null;
-	const { memoizedState } = processUpdateQueue(baseState, pending);
+	const { memoizedState } = processUpdateQueue(baseState, pending, renderLane);
 	wip.memoizedState = memoizedState;
 
 	// memoizedState 就是 ReactElement  <App />

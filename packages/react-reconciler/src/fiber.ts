@@ -1,3 +1,4 @@
+import { Lane, Lanes, NoLane, NoLanes } from './fiberLanes';
 import { Key, Props, Ref, ReactElementType } from 'shared/ReactTypes';
 import { Flags, NoFlags } from './fiberFlags';
 import { Container } from 'hostConfig';
@@ -58,11 +59,15 @@ export class FiberRootNode {
 	container: Container; // 宿主环境不同对应的不同 dom环境是domElement
 	current: FiberNode; // current
 	finishedWork: FiberNode | null; // 更新完成，即递归操作完成后存放hostRootFiber
+	pendingLanes: Lanes; // 未被消费的lanes集合
+	finishedLane: Lane; // 正在被消费的lane
 	constructor(container: Container, hostRootFiber: FiberNode) {
 		this.container = container;
 		this.current = hostRootFiber;
 		hostRootFiber.stateNode = this;
 		this.finishedWork = null;
+		this.pendingLanes = NoLanes;
+		this.finishedLane = NoLane;
 	}
 }
 
