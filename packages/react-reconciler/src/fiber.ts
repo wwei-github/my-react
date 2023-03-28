@@ -8,6 +8,7 @@ import {
 	HostComponent,
 	WorkTag
 } from './workTags';
+import { Effect } from './fiberHooks';
 export class FiberNode {
 	tag: WorkTag;
 	key: Key;
@@ -55,12 +56,19 @@ export class FiberNode {
 	}
 }
 
+export interface PendingPassiveEffects {
+	unmount: Effect[];
+	update: Effect[];
+}
+
 export class FiberRootNode {
 	container: Container; // 宿主环境不同对应的不同 dom环境是domElement
 	current: FiberNode; // current
 	finishedWork: FiberNode | null; // 更新完成，即递归操作完成后存放hostRootFiber
 	pendingLanes: Lanes; // 未被消费的lanes集合
 	finishedLane: Lane; // 正在被消费的lane
+	pendingPassiveEffects: PendingPassiveEffects;
+
 	constructor(container: Container, hostRootFiber: FiberNode) {
 		this.container = container;
 		this.current = hostRootFiber;
@@ -68,6 +76,10 @@ export class FiberRootNode {
 		this.finishedWork = null;
 		this.pendingLanes = NoLanes;
 		this.finishedLane = NoLane;
+		this.pendingPassiveEffects = {
+			unmount: [],
+			update: []
+		};
 	}
 }
 

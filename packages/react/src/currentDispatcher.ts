@@ -5,6 +5,7 @@ import { Action } from 'shared/ReactTypes';
 // 例子： const [num,setNum] = useState(0)  ||  useState((num)=> num + 1)
 export interface Dispatcher {
 	useState: <T>(initialState: (() => T) | T) => [T, Dispatch<T>];
+	useEffect: (callback: () => void | void, deps: any[] | void) => void;
 }
 export type Dispatch<State> = (action: Action<State>) => void;
 
